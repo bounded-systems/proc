@@ -4,7 +4,10 @@
   "description": "The one allowed subprocess spawn point, routing external-tool invocations through a capability",
   "bounded": {
     "tagline": "The one allowed subprocess spawn point, routing external-tool invocations through a capability",
-    "kind": "door"
+    "kind": "door",
+    "facet": "verb",
+    "role": "capability-seam",
+    "domain": "process/spawn"
   },
   "license": "MIT",
   "type": "module",
