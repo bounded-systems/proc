@@ -20,6 +20,7 @@ import { processEnv } from "@bounded-systems/env";
 
 import { streamCapture } from "./capture.ts";
 
+/** Zod schema validating a {@link ProcRequest} (command + args + cwd/env/stdin/timeout/stdio). */
 export const procRequestSchema = z.object({
   command: z.string().min(1),
   args: z.array(z.string()).default([]),
@@ -30,12 +31,18 @@ export const procRequestSchema = z.object({
   stdio: z.enum(["pipe", "inherit"]).default("pipe"),
 });
 
+/** A subprocess request: the command to run and how (parsed from {@link procRequestSchema}). */
 export type ProcRequest = z.input<typeof procRequestSchema>;
 
+/** The outcome of a subprocess: exit status, captured streams, and terminating signal. */
 export interface ProcResult {
+  /** Exit code (or a signal-derived status when killed). */
   readonly status: number;
+  /** Captured standard output. */
   readonly stdout: string;
+  /** Captured standard error. */
   readonly stderr: string;
+  /** The signal that terminated the process, or `null`. */
   readonly signal: string | null;
 }
 
@@ -44,6 +51,7 @@ export interface ProcResult {
  * ship the request over a wire and run it elsewhere — the contract is identical.
  */
 export interface ProcExecutor {
+  /** Run `req` and resolve its {@link ProcResult}. */
   exec(req: ProcRequest): Promise<ProcResult>;
 }
 

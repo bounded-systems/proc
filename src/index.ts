@@ -33,16 +33,23 @@ export {
   captureFailureDetail,
 } from "./capture.ts";
 
+/** The captured result of a {@link CommandRunner} run. */
 export type CommandResult = {
+  /** Captured standard output. */
   stdout: string;
+  /** Captured standard error. */
   stderr: string;
+  /** Exit code (signal-derived when killed). */
   status: number;
 };
 
+/** Options for a {@link CommandRunner} run. */
 export interface RunOptions {
+  /** Working directory for the child. */
   cwd?: string;
   /** When not false (default), a non-zero exit throws. */
   check?: boolean;
+  /** Environment for the child (defaults to the sanctioned `processEnv()`). */
   env?: NodeJS.ProcessEnv;
   /**
    * "pipe" (default) captures stdout/stderr into the result; "inherit" wires
@@ -72,6 +79,7 @@ function signalExitStatus(signal: NodeJS.Signals | string | null): number {
   return 128 + (typeof num === "number" ? num : 0);
 }
 
+/** The default {@link CommandRunner}: a synchronous `spawnSync` with capture, timeout, and (by default) throw-on-nonzero-exit. */
 export const defaultRunner: CommandRunner = (cmd, options = {}) => {
   const [file, ...args] = cmd;
   if (!file) {

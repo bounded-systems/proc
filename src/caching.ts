@@ -24,12 +24,17 @@ import {
 import type { ProcExecutor, ProcRequest, ProcResult } from "./contract.ts";
 import { procRequestSchema } from "./contract.ts";
 
+/** A keyed store of {@link ProcResult}s backing a caching executor. */
 export interface ProcCache {
+  /** The cached result for `key`, or `undefined` on a miss. */
   get(key: string): ProcResult | undefined;
+  /** Cache `value` under `key`. */
   set(key: string, value: ProcResult): void;
+  /** Drop everything. */
   clear(): void;
 }
 
+/** A simple in-memory {@link ProcCache} (a `Map`); not persisted across processes. */
 export function inMemoryProcCache(): ProcCache {
   const map = new Map<string, ProcResult>();
   return {
@@ -64,16 +69,21 @@ function cacheKey(req: ProcRequest): string {
   });
 }
 
+/** A {@link ProcExecutor} that memoizes cacheable requests, with an explicit drop. */
 export interface CachingProcExecutor extends ProcExecutor {
   /** Drop all cached results — the next read of each re-derives lazily. */
   invalidate(): void;
 }
 
+/** Options for {@link cachingProcExecutor}. */
 export interface CachingProcOptions {
+  /** The backing store (defaults to {@link inMemoryProcCache}). */
   cache?: ProcCache;
+  /** Predicate deciding which requests may be cached (defaults to {@link policyCacheable}). */
   isCacheable?: (req: ProcRequest) => boolean;
 }
 
+/** Wrap an executor so cacheable requests are memoized; returns a {@link CachingProcExecutor}. */
 export function cachingProcExecutor(
   inner: ProcExecutor,
   opts: CachingProcOptions = {},
