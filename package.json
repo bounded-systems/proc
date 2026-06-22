@@ -1,6 +1,6 @@
 {
   "name": "@bounded-systems/proc",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "The one allowed subprocess spawn point, routing external-tool invocations through a capability",
   "bounded": {
     "tagline": "The one allowed subprocess spawn point, routing external-tool invocations through a capability",
@@ -59,7 +59,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
-    "@bounded-systems/env": "npm:@jsr/bounded-systems__env",
-    "@bounded-systems/policy": "npm:@jsr/bounded-systems__policy"
+    "@bounded-systems/env": "npm:@jsr/bounded-systems__env@^0.2.0",
+    "@bounded-systems/policy": "npm:@jsr/bounded-systems__policy@^0.2.1"
   }
 }
