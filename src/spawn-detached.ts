@@ -14,8 +14,11 @@ import { closeSync, openSync } from "node:fs";
 
 import { processEnv } from "@bounded-systems/env";
 
+/** Options for {@link spawnDetached} — a child that outlives the parent. */
 export type SpawnDetachedOptions = {
+  /** Working directory for the child. */
   cwd?: string;
+  /** Environment for the child. */
   env?: NodeJS.ProcessEnv;
   /**
    * When set, the child's stdout+stderr are appended to this file (created if
@@ -25,6 +28,7 @@ export type SpawnDetachedOptions = {
   logPath?: string;
 };
 
+/** Result of {@link spawnDetached}: the detached child's process id. */
 export type SpawnDetachedResult = { pid: number };
 
 /**

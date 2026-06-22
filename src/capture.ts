@@ -21,27 +21,37 @@ import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
 
+/** Result of a temp-file-backed spawn capture (no in-memory output ceiling). */
 export type SpawnCaptureResult = {
+  /** Exit code, or `null` if terminated by a signal. */
   status: number | null;
+  /** Terminating signal, or `null`. */
   signal: NodeJS.Signals | null;
   /** Fully-read child stdout — no in-memory ceiling. */
   stdout: string;
+  /** Fully-read child stderr. */
   stderr: string;
+  /** A spawn error (e.g. ENOENT, ETIMEDOUT), if any. */
   error?: Error | undefined;
 };
 
+/** Options for {@link spawnCapture}. */
 export type SpawnCaptureOptions = {
+  /** Working directory for the child. */
   cwd?: string | undefined;
+  /** Environment for the child. */
   env?: NodeJS.ProcessEnv | undefined;
   /** ms; passed through to spawnSync. */
   timeout?: number | undefined;
 };
 
+/** The {@link spawnCapture} signature — an injectable capture seam. */
 export type SpawnCaptureFn = (
   cmd: readonly string[],
   options?: SpawnCaptureOptions,
 ) => SpawnCaptureResult;
 
+/** Run a command capturing stdout/stderr via temp files (no in-memory cap — for output that overflows spawnSync's buffer). */
 export const spawnCapture: SpawnCaptureFn = (cmd, options = {}) => {
   const [file, ...args] = cmd;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prx-spawn-"));
@@ -111,6 +121,7 @@ export function captureFailureDetail(r: SpawnCaptureResult): string {
   return r.error?.message ?? (r.signal ? `killed by ${r.signal}` : (r.stderr || "").trim());
 }
 
+/** {@link SpawnCaptureOptions} plus stdin + per-chunk streaming callbacks. */
 export type StreamCaptureOptions = SpawnCaptureOptions & {
   /** Serializable stdin written to the child then closed (no live stream). */
   stdin?: string | undefined;
