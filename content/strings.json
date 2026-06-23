@@ -5,6 +5,10 @@
   },
   "description": {
     "type": "meta",
-    "value": "The one allowed subprocess spawn point, routing external-tool invocations through a capability"
+    "value": "The one allowed subprocess spawn point — every external-tool invocation routes through this capability.  Nothing in prx calls node:child_process directly.  They go through a CommandRunner, so spawning is policy-checked (via @bounded-systems/policy), capturable, and substitutab…"
+  },
+  "keywords": {
+    "type": "body",
+    "value": "PROC · SUBPROCESS · SPAWN · CAPABILITY · POLICY · SEAM"
   }
 }
