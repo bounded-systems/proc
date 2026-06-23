@@ -1,0 +1,10 @@
+{
+  "name": {
+    "type": "name",
+    "value": "proc"
+  },
+  "description": {
+    "type": "meta",
+    "value": "The one allowed subprocess spawn point, routing external-tool invocations through a capability"
+  }
+}
