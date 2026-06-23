@@ -5,7 +5,7 @@
   },
   "description": {
     "type": "meta",
-    "value": "The one allowed subprocess spawn point — every external-tool invocation routes through this capability.  Nothing in prx calls node:child_process directly.  They go through a CommandRunner, so spawning is policy-checked (via @bounded-systems/policy), capturable, and substitutab…"
+    "value": "The sanctioned subprocess spawn point — external-tool invocations route through this capability. Nothing in prx calls node:child_process directly; they go through a CommandRunner so spawning is policy-checked, capturable, and substitutable."
   },
   "keywords": {
     "type": "body",
