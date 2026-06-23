@@ -1,6 +1,6 @@
 {
   "name": "@bounded-systems/proc",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "exports": "./src/index.ts",
   "imports": {
     "zod": "npm:zod@^4.4.3"
