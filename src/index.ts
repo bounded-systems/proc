@@ -149,7 +149,7 @@ export const runCaptured: CommandRunner = (cmd, options = {}) => {
 };
 
 export type { ProcRequest, ProcResult, ProcExecutor } from "./contract.ts";
-export { procRequestSchema, localProcExecutor } from "./contract.ts";
+export { localProcExecutor } from "./contract.ts";
 
 export type { ProcCache, CachingProcExecutor, CachingProcOptions } from "./caching.ts";
 export { cachingProcExecutor, inMemoryProcCache, policyCacheable } from "./caching.ts";

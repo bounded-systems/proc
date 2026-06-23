@@ -22,7 +22,7 @@ import {
 } from "@bounded-systems/policy";
 
 import type { ProcExecutor, ProcRequest, ProcResult } from "./contract.ts";
-import { procRequestSchema } from "./contract.ts";
+import { procRequestSchema } from "./schemas.ts";
 
 /** A keyed store of {@link ProcResult}s backing a caching executor. */
 export interface ProcCache {

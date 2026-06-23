@@ -14,25 +14,32 @@
 // a remote executor would reject it or PTY-forward.
 import { spawn } from "node:child_process";
 
-import { z } from "zod";
-
 import { processEnv } from "@bounded-systems/env";
 
 import { streamCapture } from "./capture.ts";
+import { procRequestSchema } from "./schemas.ts";
 
-/** Zod schema validating a {@link ProcRequest} (command + args + cwd/env/stdin/timeout/stdio). */
-export const procRequestSchema = z.object({
-  command: z.string().min(1),
-  args: z.array(z.string()).default([]),
-  cwd: z.string().optional(),
-  env: z.record(z.string(), z.string()).optional(),
-  stdin: z.string().optional(),
-  timeoutMs: z.number().int().positive().optional(),
-  stdio: z.enum(["pipe", "inherit"]).default("pipe"),
-});
-
-/** A subprocess request: the command to run and how (parsed from {@link procRequestSchema}). */
-export type ProcRequest = z.input<typeof procRequestSchema>;
+/**
+ * A subprocess request: the command to run and how. Explicit type (the input
+ * shape of the internal `procRequestSchema`) so no zod type reaches the public
+ * API — a contract test drift-guards it against the schema.
+ */
+export type ProcRequest = {
+  /** The program to run (non-empty). */
+  command: string;
+  /** Positional arguments (default: none). */
+  args?: string[] | undefined;
+  /** Working directory for the child. */
+  cwd?: string | undefined;
+  /** Environment for the child (defaults to the sanctioned ambient env). */
+  env?: Record<string, string> | undefined;
+  /** Serializable stdin written to the child, then closed. */
+  stdin?: string | undefined;
+  /** Wall-clock budget in ms; on expiry the child is killed. */
+  timeoutMs?: number | undefined;
+  /** `"pipe"` (default) captures stdout/stderr; `"inherit"` wires them to this terminal. */
+  stdio?: ("pipe" | "inherit") | undefined;
+};
 
 /** The outcome of a subprocess: exit status, captured streams, and terminating signal. */
 export interface ProcResult {
