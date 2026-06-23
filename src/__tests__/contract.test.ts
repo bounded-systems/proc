@@ -1,6 +1,9 @@
 import { describe, expect, test } from "bun:test";
 
-import { localProcExecutor, procRequestSchema } from "@bounded-systems/proc";
+import { localProcExecutor } from "@bounded-systems/proc";
+
+// procRequestSchema is internal (not part of the public API); the test reaches in.
+import { procRequestSchema } from "../schemas.ts";
 
 const exec = localProcExecutor();
 
