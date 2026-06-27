@@ -1,69 +1,29 @@
-import { describe, expect, test } from "bun:test";
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { test } from "bun:test";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const HERE = dirname(fileURLToPath(import.meta.url));
-const MODULE_ROOT = resolve(HERE, "..");
+import { DEFAULT_AMBIENT_RULES, assertSeam } from "@bounded-systems/seam-check";
 
-// @bounded-systems/proc is the ONE sanctioned spawn point. It may touch node:child_process
-// (the primitive it wraps) + node:os, and reaches the ambient environment only
-// through @bounded-systems/env — never process.env directly. Every other package's boundary
-// test forbids raw spawn so that shelling out becomes an explicit @bounded-systems/proc
-// import edge; this is where that primitive is allowed to live.
-const PROD_ALLOWLIST = new Set<string>([
-  "node:child_process",
-  "node:os",
-  "node:fs",
-  "node:path",
-  "@bounded-systems/env",
-  "zod",
-  "@bounded-systems/policy",
-]);
-const TEST_ALLOWLIST = new Set<string>([
-  ...PROD_ALLOWLIST,
-  "bun:test",
-  "node:fs",
-  "node:path",
-  "node:url",
-  "@bounded-systems/proc",
-]);
+const SRC = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
-const IMPORT_RE =
-  /(?:^|\n)\s*(?:import|export)\s+(?:type\s+)?(?:[^'"`;]*?\s+from\s+)?['"]([^'"]+)['"]/g;
-
-function listTsFiles(d: string): string[] {
-  const out: string[] = [];
-  for (const entry of readdirSync(d)) {
-    const full = join(d, entry);
-    if (statSync(full).isDirectory()) out.push(...listTsFiles(full));
-    else if (entry.endsWith(".ts")) out.push(full);
-  }
-  return out;
-}
-
-describe("@bounded-systems/proc extractability", () => {
-  test("imports stay within the allowlist", () => {
-    const violations: Array<{ file: string; spec: string }> = [];
-    for (const file of listTsFiles(MODULE_ROOT)) {
-      const isTest = file.includes("/__tests__/");
-      const allowlist = isTest ? TEST_ALLOWLIST : PROD_ALLOWLIST;
-      const source = readFileSync(file, "utf8");
-      for (const match of source.matchAll(IMPORT_RE)) {
-        const spec = match[1]!;
-        if (spec.startsWith(".")) continue;
-        if (allowlist.has(spec)) continue;
-        violations.push({ file: relative(MODULE_ROOT, file), spec });
-      }
-    }
-    expect(violations).toEqual([]);
-  });
-
-  test("reaches ambient env only through @bounded-systems/env, never process.env directly", () => {
-    for (const file of listTsFiles(MODULE_ROOT)) {
-      if (file.includes("/__tests__/")) continue;
-      const src = readFileSync(file, "utf8");
-      expect(src.includes("process.env")).toBe(false);
-    }
+// @bounded-systems/proc is the ONE sanctioned spawn point. It may touch
+// node:child_process (the primitive it wraps) + node:os/fs/path, and reaches the
+// ambient environment only through @bounded-systems/env — never process.env
+// directly. Because proc legitimately spawns, the spawn ambient rules don't
+// apply here; we keep only the env rule, enforcing "no direct process.env".
+test("@bounded-systems/proc upholds its seam claim", () => {
+  assertSeam({
+    root: SRC,
+    prod: [
+      "node:child_process",
+      "node:os",
+      "node:fs",
+      "node:path",
+      "@bounded-systems/env",
+      "zod",
+      "@bounded-systems/policy",
+    ],
+    test: ["@bounded-systems/proc", "@bounded-systems/seam-check"],
+    forbidAmbient: DEFAULT_AMBIENT_RULES.filter(([, label]) => label === "ambient env / auth"),
   });
 });

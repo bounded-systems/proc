@@ -9,6 +9,7 @@
         "@bounded-systems/policy": "npm:@jsr/bounded-systems__policy",
       },
       "devDependencies": {
+        "@bounded-systems/seam-check": "npm:@jsr/bounded-systems__seam-check@^0.1.0",
         "@types/bun": "^1.3.14",
         "typescript": "^6.0.3",
         "zod": "^4.4.3",
@@ -22,6 +23,8 @@
     "@bounded-systems/env": ["@jsr/bounded-systems__env@0.2.0", "https://npm.jsr.io/~/11/@jsr/bounded-systems__env/0.2.0.tgz", {}, "sha512-5WqnPWlI4TI30T+FUWFXAQfZWV6epGQwScGeyVGh1ylNsLyscTyVdgiqBtdaJvQ1JGN6YaWqjZ7gq1dQC+THEA=="],
 
     "@bounded-systems/policy": ["@jsr/bounded-systems__policy@0.2.0", "https://npm.jsr.io/~/11/@jsr/bounded-systems__policy/0.2.0.tgz", {}, "sha512-4zgFOYBcvtIcfiin513amV8Nand1s0tUZIGEOWfCXUX+OjIza/A7arn5NeSYFKnHEHCHfHjO0x90vcJTvNdFvg=="],
+
+    "@bounded-systems/seam-check": ["@jsr/bounded-systems__seam-check@0.1.0", "https://npm.jsr.io/~/11/@jsr/bounded-systems__seam-check/0.1.0.tgz", {}, "sha512-nFzH7o19uIBF7BfJrly668AkynjdZ99Qk6pVRoOsf7/9M5vtKK7emI+B2jDFMSMyqZvVuILWKXz7tFs2vD1/LA=="],
 
     "@types/bun": ["@types/bun@1.3.14", "", { "dependencies": { "bun-types": "1.3.14" } }, "sha512-h1hFqFVcvAvD9j9K7ZW7vd82aSA+rTdznZa+5bwvCwqSB1jmmfLcbIWhOLx1/+boy/xmjgCs/OMUL8hRJSmnPw=="],
 
